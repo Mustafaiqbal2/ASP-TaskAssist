@@ -1,0 +1,369 @@
+﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+body
+{
+    background-image : url(../img/background.jpg);
+    background-repeat: repeat;
+    background-position: center;
+    opacity: 0.9;
+}
+body, h1, h2, p
+{
+    color: #fff;
+}
+.infoContainer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow: hidden;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 100px;
+    background-color: #8a33b885;
+}
+.infoContainer h2,h3,li
+{
+    color: #fff;
+}
+
+.featureContainer {
+    display: flex;
+    justify-content: space-evenly;
+    overflow: hidden;
+    flex-direction: column;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feature {
+    block-size: 200px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow: hidden;
+    flex-direction: column;
+    margin: 10px;
+    background-color:#232567;
+    border-radius: 20px;
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+.feature.visible {
+    animation: fadeIn 2s forwards;
+}
+.tech.visible {
+    animation: fadeIn 2s forwards;
+}
+
+.tech {
+    block-size: 300px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow: hidden;
+    flex-direction: column;
+    margin: 10px;
+    border-radius: 20px;
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.5s, transform 0.5s;
+}
+.vision
+{
+    display: block;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow: hidden;
+    flex-direction: column;
+    margin: 10px;
+    border-radius: 20px;
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.5s, transform 0.5s;
+    padding: 10px;
+}
+.vision.visible {
+    animation: fadeIn 2s forwards;
+}
+.navbar {
+  white-space: normal;
+  text-align: center;
+  background-color: #fff;
+  word-break: break-all;
+}
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+p.navbar-brand {
+    color: #0077cc;
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+a {
+  color: #0077cc;
+  transition: all .35s;
+}
+
+#logo{
+    width: 50px;
+    height: 50px;
+    
+}
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+
+#grp{
+    text-align: center;
+}
+
+.container2{
+    margin-top: 10%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow: hidden;
+}
+
+.container2 figcaption {
+    color: #3e3e3e;
+    font-size: 24px;
+    margin-top: 5%;
+    text-align: center;
+}
+
+.container2 img {
+    width: 250px;
+    height: 250px;
+    align-content: center;
+    border-radius: 50%;
+    border: 5px solid;
+    border-color: #91ebf9;
+    object-fit: cover;
+}
+
+.button {
+    display: block;
+    width: 200px;
+    height: 50px;
+    line-height: 50px;
+    font-weight: bold;
+    text-decoration: none;
+    background: transparent;
+    text-align: center;
+    color: #2ecc71;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 3px solid #2ecc71;
+    transition: all .35s;
+}
+.containerI a:hover {
+    width: 250px;
+    background: #1eec0f;
+    color: #fff;
+    border: 3px solid #1eec0f;
+}
+
+.conatinerI a:hover + .icon {
+    border: 3px solid #2ecc71;
+    right: -25%;
+}
+a:hover {
+    width: 150px;
+    background: #a2a2a2;
+    color: #2ecc71;
+    text-align: center;
+}
+a:hover + .icon {
+    border: 3px solid #3a3a3a;
+    right: -25%;
+}
+
+.containerL
+{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow: hidden;
+}
+.containerI h1 {
+    color: #fff;
+    font-size: 30px;
+    margin-top: 5%;
+}
+.containerI p{
+    color: #fff;
+    font-size: 20px;
+}
+.containerL .buttonL {
+    display: block;
+    margin: 50px;
+    width: 400px;
+    height: 300px;
+    line-height: 275px;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all .35s;
+    border-radius: 10px;
+    color: #fff;
+    border: 25px solid #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+#mem {
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+}
+#adm {
+    background-color: #d62525;
+    border-color: #d62525;
+}
+.containerL .buttonL:hover
+{
+    height:120%;
+    width:100%;
+    border: 3px solid ;
+    line-height: 325px;
+    opacity: 100%;
+}
+.containerL #adm:hover {
+    color: #fff;
+    border-color: #d62525;
+    background: #d62525;
+}
+.containerL #mem:hover {
+    color: #fff;
+    border-color: #2ecc71;
+    background: #2ecc71;
+}
+.LogInput {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+    color: #000000;
+}
+.LogInput h1
+{
+    color: #000000;
+
+}
+
+/* Style the input fields */
+.LogInput input[type=text],
+.LogInput input[type=password] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #000000;
+}
+
+/* Style the submit button */
+.LogInput input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: black;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+    /* Change submit button color on hover */
+    .LogInput input[type=submit]:hover {
+        background-color: #45a049;
+    }
+
+/* Add a hover effect to input fields */
+.LogInput input[type=text]:hover,
+.LogInput input[type=password]:hover {
+    border-color: #666;
+}
+
+/* Add padding to the container */
+.UName,
+.Pass {
+    padding: 16px;
+}
+
+/* Clear floats */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}

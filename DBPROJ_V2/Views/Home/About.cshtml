@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "About Us";
+}
+<script>
+    document.addEventListener("DOMContentLoaded", function () 
+    {
+        const features = document.querySelectorAll('.feature, .tech, .vision');
+        const tech = document.querySelectorAll('.tech');
+
+        const revealOnScroll = () => 
+        {
+            features.forEach(feature => {
+                const rect = feature.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                    feature.classList.add('visible');
+                }
+            });
+        };
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Trigger on page load in case elements are already in view
+    });
+</script>
+<body id="aboutBody">
+    <h1>About Task Assist</h1>
+    <p>
+        Welcome to the Smart Personal Assistant Dashboard – 
+        a comprehensive web application designed to streamline
+        your task management and enhance productivity.
+        This project is a testament to the capabilities of modern web
+        technologies, combining robust backend support, dynamic front-end
+        interfaces, and cutting-edge AI integration.
+    </p>
+    <h2 id="grp">Group Members(Initial)</h2>
+    <div class="container2">
+        <figure>
+            <img src="~/img/atif.jpg"/>
+            <figcaption>Atif</figcaption>
+        </figure>
+        <figure>
+            <img src="~/img/mustafa.jpg" />
+            <figcaption>Mustafa</figcaption>
+        </figure>
+        <figure>
+            <img src="~/img/saad.jpg" />
+            <figcaption>Saad</figcaption>
+        </figure>
+    </div>
+    <div class="infoContainer">
+        <h2>Key Features</h2>
+        <div class="featureContainer">
+            <div class="feature">
+                <h3>User Authentication and Security</h3>
+                <ul>
+                    <li>Secure user registration and login</li>
+                    <li>Role-based access control</li>
+                    <li>Encrypted password storage</li>
+                </ul>
+            </div>
+            <div class="feature">
+                <h3>Task Management</h3>
+                <ul>
+                    <li>Task creation, editing, and deletion</li>
+                    <li>Task categorization and prioritization</li>
+                    <li>Task filtering and sorting</li>
+                </ul>
+            </div>
+            <div class="feature">
+                <h3>Reminder System</h3>
+                <ul>
+                    <li>Set reminders for tasks and events</li>
+                    <li>Receive notifications for upcoming deadlines</li>
+                    <li>Customize reminder settings and frequency</li>
+                </ul>
+            </div>
+            <div class="feature">
+                <h3>AI Integration</h3>
+                <ul>
+                    <li> Enjoy natural language conversations to simplify your task management experience.</li>
+                    <li> Interact with a smart chatbot, powered by a large language model (GPT), for assistance with tasks and reminders.</li>
+                </ul>
+            </div>
+            <div class="feature">
+                <h3>User Profile Management</h3>
+                <ul>
+                    <li>Update personal information and preferences</li>
+                    <li>View task history and completion statistics</li>
+                    <li>Customize dashboard layout and theme</li>
+                </ul>
+            </div>
+            <div class="feature">
+                <h3>Analytics and Reporting</h3>
+                <ul>
+                    <li>Track task completion rates and productivity metrics</li>
+                    <li>Generate reports and visualizations for performance analysis</li>
+                    <li>Identify trends and patterns in task management behavior</li>
+                </ul>
+            </div>
+            <div class="tech">
+                <h2>Technologies Used</h2>
+                <ul>
+                    <li>ASP.NET Core</li>
+                    <li>Entity Framework Core</li>
+                    <li>SQL Server</li>
+                    <li>HTML/CSS/JavaScript</li>
+                    <li>Bootstrap</li>
+                    <li>Sql Server Express</li>
+                    <li>SendGrid</li>
+                    <li>OpenAI GPT-3</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="vision">
+        <h2>Our Vision</h2>
+        <p>
+                The Smart Personal Assistant Dashboard is
+                more than just a task manager – it is a 
+                step towards a more organized and productive 
+                life. By leveraging the latest in web development 
+                and AI technology, we aim to provide an intuitive 
+                and powerful tool that adapts to your needs. Whether 
+                you're managing daily tasks, setting reminders, or 
+                seeking assistance from our AI-powered chatbot, our 
+                dashboard is here to help you achieve your goals efficiently.
+                <br />
+                Thank you for using the Smart Personal Assistant
+                Dashboard. We are committed to continually improving 
+                and expanding our features to better serve your needs. 
+                Your feedback and suggestions are always welcome as we 
+                strive to create the best personal assistant experience 
+                possible.
+        </p>
+    </div>
+</body>

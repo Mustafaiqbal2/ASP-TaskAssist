@@ -1,0 +1,62 @@
+﻿@model DBPROJ_V2.Models.Cred
+
+@{
+    ViewData["Title"] = "Login";
+}
+<script src="~/scripts/script.js"></script>
+
+@{
+    ViewData["Title"] = "Login Form";
+}
+
+<form asp-area="" asp-action="LoginForm" id="loginForm">
+    <div class="LogInput">
+        <h1>LOGIN</h1>
+        <div>
+            <div class="UName">
+                <label>Username:</label>
+                <input asp-for=username type="text" id="username" name="username" required />
+            </div>
+            <div class="Pass">
+                <label for="password">Password:</label>
+                <input asp-for=password type="password" required/>
+            </div>
+            <section>
+                <hr />
+                <h4>Use another service to log in.</h4>
+                <div>
+                    <p>
+                        <button type="button" onclick="location.href='@Url.Action("ExternalLogin", "Home", new { provider = "GitHub" })'" class="btn btn-dark">GitHub</button>
+                    </p>
+                </div>
+            </section>
+            <div class="RegButton">
+                <button type="submit" class="button" onclick="location.href='@Url.Action("Register","Home",null)'">Register</button>
+            </div>
+        </div>
+        <div id="msg" class="message" style="color:red">@TempData["msg"]</div>
+    </div>
+    <div class="Login">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <div class="Login containerL" style="margin-top: 5%">
+            <button class="buttonL" id="mem" asp-for=userType value="mem">Member</button>
+            <button class="buttonL" id="adm" asp-for=userType value="admin">Administrator</button>
+            <input type="hidden" id="hiddenUserType" name="userType" />
+        </div>
+    </div>
+
+</form>
+
+@{
+    if (ViewBag.Error != null)
+    {
+        <div>
+            <p>@ViewBag.Error</p>
+        </div>
+    }
+}
+<script src="~/scripts/script.js"></script>
+
+@{
+    ViewData["Title"] = "Login Form";
+}
