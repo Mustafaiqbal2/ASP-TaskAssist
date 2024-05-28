@@ -12,8 +12,6 @@ namespace DBPROJ_V2.Controllers
 {
     public class HomeController : Controller
     {
-        Database db = new Database();
-
         public HomeController(ILogger<HomeController> logger)
         {
         }
@@ -37,39 +35,7 @@ namespace DBPROJ_V2.Controllers
         [HttpPost]
         public IActionResult LoginForm([Bind]Cred credentials, string userType)
         {
-            if(credentials.password == null || credentials.username == null)
-            {
-                TempData["msg"] = "Please fill in all fields!";
-                return RedirectToAction("Login");
-            }
-            var uType = string.IsNullOrEmpty(userType) ? "" : userType.ToLower();
-            switch(uType)
-            {
-                case "admin":
-                    Console.WriteLine("Admin");
-                    break;
-                case "mem":
-                    Console.WriteLine("Member");
-                    break;
-            }
-            bool flag = db.validateLogin(credentials, uType);
-            if (flag)
-            {
-                  switch  (uType)
-                    {
-                        case "admin":
-                            return RedirectToAction("Index", "Admin", null);
-                        case "mem":
-                            return RedirectToAction("Member");
-                        default: 
-                            return RedirectToAction("About");
-                    }
-            }
-            else
-            {
-                TempData["msg"] = "Login Failed!";
-                return RedirectToAction("Login");
-            }
+            return RedirectToAction("LoginForm", "Account", new { username = credentials.Username, password = credentials.Password, userType = userType });
         }
         [HttpGet]
         public IActionResult Login()
@@ -87,32 +53,21 @@ namespace DBPROJ_V2.Controllers
         //Registration
         public IActionResult Register()
         {
+            var locations = new List<string> { "United States", "Canada", "United Kingdom", "Australia", "Germany" }; // Add more as needed
+            ViewData["Locations"] = locations;
             return View();
         }
         public IActionResult regLogic([Bind]RegisterViewModel registerViewModel)
         {
-            /*
             if (ModelState.IsValid)
             {
-                bool flag = db.registerUser(registerViewModel);
-                if (flag)
-                {
-                    TempData["msg"] = "Registration Successful!";
-                    return RedirectToAction("Login");
-                }
-                else
-                {
-                    TempData["msg"] = "Registration Failed!";
-                    return RedirectToAction("Register");
-                }
+                return RedirectToAction("register","Account",registerViewModel);
             }
             else
             {
                 TempData["msg"] = "Please fill in all fields!";
                 return RedirectToAction("Register");
             }
-            */
-            return RedirectToAction("Login");
         }
     }
 }

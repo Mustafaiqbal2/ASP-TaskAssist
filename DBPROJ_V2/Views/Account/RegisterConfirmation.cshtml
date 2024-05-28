@@ -1,0 +1,41 @@
+﻿@model string
+@{
+    ViewData["Title"] = "Register Confirmation";
+}
+<h1>Register Confirmation</h1>
+<p>Email: @Model</p>
+
+<div id="confirmationStatus"></div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Function to check email confirmation status
+            function checkConfirmationStatus(email) {
+                $.ajax({
+                    url: "/Account/CheckConfirmationStatus",
+                    type: "POST",
+                    data: JSON.stringify(email), // Send email directly as a string
+                    contentType: "application/json; charset=utf-8", // Set content type to JSON
+                    success: function (result) {
+                        if (result === true) {
+                            // Email has been confirmed, redirect to Home/Index
+                            window.location.href = "/Home/Index";
+                        } else {
+                            // Email not confirmed yet, show message
+                            $("#confirmationStatus").text("Email not confirmed yet. Please wait...");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.log("Error:", error);
+                        $("#confirmationStatus").text("Error checking email confirmation status. Please try again later.");
+                    }
+                });
+            }
+
+            // Call the function to check confirmation status with the email from the model
+            checkConfirmationStatus("@Model");
+        });
+    </script>
+}

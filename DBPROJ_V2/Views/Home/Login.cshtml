@@ -15,11 +15,11 @@
         <div>
             <div class="UName">
                 <label>Username:</label>
-                <input asp-for=username type="text" id="username" name="username" required />
+                <input asp-for=Username type="text" id="username" name="username" required />
             </div>
             <div class="Pass">
                 <label for="password">Password:</label>
-                <input asp-for=password type="password" required/>
+                <input asp-for=Password type="password" required/>
             </div>
             <section>
                 <hr />
@@ -56,7 +56,3 @@
     }
 }
 <script src="~/scripts/script.js"></script>
-
-@{
-    ViewData["Title"] = "Login Form";
-}

@@ -10,5 +10,22 @@ namespace DBPROJ_V2.Models
             : base(options)
         {
         }
+
+        public DbSet<UserProfile> UserProfiles { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserProfile>(entity =>
+            {
+                entity.HasKey(e => e.UserProfileId);  // Define primary key
+                entity.HasOne(e => e.User)
+                      .WithOne()
+                      .HasForeignKey<UserProfile>(e => e.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+        }
     }
+
 }

@@ -61,3 +61,11 @@ CREATE TABLE [dbo].[AspNetUserTokens] (
     CONSTRAINT [PK_AspNetUserTokens] PRIMARY KEY ([UserId], [LoginProvider], [Name]),
     CONSTRAINT [FK_AspNetUserTokens_AspNetUsers_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[AspNetUsers] ([Id]) ON DELETE CASCADE
 );
+CREATE TABLE UserProfiles (
+    UserId NVARCHAR(450) NOT NULL PRIMARY KEY,
+    FullName NVARCHAR(256) NOT NULL,
+    Location NVARCHAR(256) NOT NULL,
+    FOREIGN KEY (UserId) REFERENCES AspNetUsers(Id)
+);
+
+DROP TABLE UserProfile

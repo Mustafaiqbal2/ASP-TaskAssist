@@ -9,6 +9,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using DBPROJ_V2.Models;
 using Microsoft.Extensions.Logging;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace DBPROJ_V2.Controllers
 {
@@ -19,14 +22,15 @@ namespace DBPROJ_V2.Controllers
         private readonly IConfiguration _configuration;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<AccountController> _logger;
-
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration, IEmailSender emailSender, ILogger<AccountController> logger)
+        private readonly ApplicationDbContext _context;
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration, IEmailSender emailSender, ILogger<AccountController> logger, ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _emailSender = emailSender;
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
@@ -59,8 +63,18 @@ namespace DBPROJ_V2.Controllers
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
             if (result.Succeeded)
             {
-                _logger.LogInformation("External login succeeded.");
-                return LocalRedirect(returnUrl);
+                //check if account already exists
+                var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+                if (user != null)
+                {
+                    _logger.LogInformation("External login succeeded.");
+                    return LocalRedirect(returnUrl);
+                }
+                else
+                {
+                    var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                    return RedirectToAction("Details","Account",email);
+                }
             }
             else if (result.RequiresTwoFactor)
             {
@@ -92,32 +106,19 @@ namespace DBPROJ_V2.Controllers
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    user = new IdentityUser { UserName = email, Email = email, EmailConfirmed = true }; // Set EmailConfirmed to true
-                    var createResult = await _userManager.CreateAsync(user);
-                    if (createResult.Succeeded)
-                    {
-                        _logger.LogInformation("User created successfully.");
-                        createResult = await _userManager.AddLoginAsync(user, info);
-                        if (createResult.Succeeded)
-                        {
-                            _logger.LogInformation("External login added to user successfully.");
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                            return LocalRedirect(returnUrl);
-                        }
-                        else
-                        {
-                            _logger.LogError("Failed to add external login to user: {Errors}", string.Join(", ", createResult.Errors.Select(e => e.Description)));
-                        }
-                    }
-                    else
-                    {
-                        _logger.LogError("Failed to create user: {Errors}", string.Join(", ", createResult.Errors.Select(e => e.Description)));
-                    }
-                    AddErrors(createResult);
+                    var locations = new List<string> { "United States", "Canada", "United Kingdom", "Australia", "Germany" }; // Add more as needed
+                    ViewData["Locations"] = locations;
+                    return RedirectToAction("Details", "Account", new { email = email });
                 }
                 else
                 {
                     _logger.LogWarning("User already exists. Attempting to add external login.");
+                    //check if user email confirmed
+                    if (!user.EmailConfirmed)
+                    {
+                        _logger.LogWarning("User email not confirmed. Redirecting to error page.");
+                        return RedirectToAction("RegisterConfirmation", "Account", new { email = user.Email });
+                    }
                     var loginResult = await _userManager.AddLoginAsync(user, info);
                     if (loginResult.Succeeded)
                     {
@@ -141,23 +142,96 @@ namespace DBPROJ_V2.Controllers
                 ModelState.AddModelError(string.Empty, error.Description);
             }
         }
-
-
         [HttpGet]
-        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        public async Task<IActionResult> LoginForm(string username,string password, string userType)
         {
-            if (userId == null || code == null)
+            if (password == null || username == null)
             {
-                return View("Error");
+                TempData["msg"] = "Please fill in all fields!";
+                return RedirectToAction("Login","Home");
             }
-            var user = await _userManager.FindByIdAsync(userId);
+
+            var user = await _userManager.FindByNameAsync(username);
             if (user == null)
             {
-                return View("Error");
+                TempData["msg"] = "Login Failed!";
+                return RedirectToAction("Login","Home");
             }
-            var result = await _userManager.ConfirmEmailAsync(user, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            if(user.EmailConfirmed == false)
+            {
+                TempData["msg"] = "Please confirm your email!";
+                return RedirectToAction("Login","Home");
+            }
+            var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+            if (!result.Succeeded)
+            {
+                TempData["msg"] = "Login Failed!";
+                return RedirectToAction("Login","Home");
+            }
+
+            var uType = string.IsNullOrEmpty(userType) ? "" : userType.ToLower();
+            switch (uType)
+            {
+                case "admin":
+                    return RedirectToAction("Index", "Home");
+                    //return RedirectToAction("Index", "Admin");
+                case "mem":
+                    return RedirectToAction("Index", "Home");
+                    //return RedirectToAction("Index", "Member");
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
         }
+        [HttpGet]
+        public async Task<IActionResult> register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Scheme);
+
+                    await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    return RedirectToAction("RegisterConfirmation", "Account", new { email = user.Email });
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
+        {
+            if (email == null || token == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var user = _context.UserProfiles
+                .Include(u => u.User) // Include the User navigation property
+                .FirstOrDefault(u => u.User.Email == email && u.UserId == token);
+
+            if (user == null)
+            {
+                return View("Error", "Home");
+            }
+
+            // Confirm the user's email
+            user.User.EmailConfirmed = true;
+            _context.SaveChanges();
+
+            return View();
+        }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -166,5 +240,86 @@ namespace DBPROJ_V2.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
+        [HttpGet]
+        public IActionResult Details(string email)
+        {
+            var locations = new List<string> { "United States", "Canada", "United Kingdom", "Australia", "Germany" }; // Add more as needed
+            ViewData["Locations"] = locations;
+            ViewData["Email"] = new string (email);  
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DetailsAdd([Bind] DetailsViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    // Save additional user info
+                    var userProfile = new UserProfile
+                    {
+                        UserId = user.Id,
+                        FullName = model.FullName,
+                        Location = model.Location
+                    };
+                    _context.UserProfiles.Add(userProfile);
+                    await _context.SaveChangesAsync();
+
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.Action(nameof(ConfirmEmail), "Account", new { userId = user.Id, code }, protocol: HttpContext.Request.Scheme);
+
+                    await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    return RedirectToAction("RegisterConfirmation", "Account",new {email = user.Email});
+                }
+                else
+                {
+                    AddErrors(result);
+                    return RedirectToAction("Error", "Home");
+                }
+            }
+            else
+            {
+                // Log ModelState errors
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                // You can log errors to the console, a file, or a logging service
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error);
+                }
+            }
+            return RedirectToAction("Error", "Home");
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult RegisterConfirmation(string email)
+        {
+            ViewData["Email"] = email;
+            return View((object)email); // Pass email as the model to the view
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CheckConfirmationStatus([FromBody] string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("Email cannot be null or empty");
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null && user.EmailConfirmed)
+            {
+                return Json(true);
+            }
+            else
+            {
+                return Json(false);
+            }
+        }
+
     }
 }
