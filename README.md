@@ -2,7 +2,6 @@
 
 A comprehensive task management web application built with ASP.NET Core, designed to help users efficiently organize, track, and complete their tasks.
 
-![ASP-TaskAssist Banner](assets/images/banner.png)
 
 ## Overview
 
